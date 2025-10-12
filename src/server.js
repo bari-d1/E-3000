@@ -4,7 +4,6 @@ import expressLayouts from "express-ejs-layouts";
 import path from "path";
 import { fileURLToPath } from "url";
 import session from "express-session";
-import SQLiteStoreFactory from "connect-sqlite3";
 import connectPgSimple from "connect-pg-simple";
 import passport from "passport";
 import methodOverride from "method-override";
@@ -24,14 +23,28 @@ import { applySecurity } from "./middleware/security.js";
 import { env } from "./config/env.js";
 import { configurePassport } from "./config/passport.js";
 
+/* --- bootstrap paths --- */
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+/* --- sanity checks (fail fast if misconfigured) --- */
+if (!process.env.DATABASE_URL) {
+  throw new Error(
+    'DATABASE_URL is not set. Set it in your .env (dev) and Render env (prod).'
+  );
+}
+if (!env.sessionSecret) {
+  throw new Error('SESSION_SECRET is not set.');
+}
+
 const app = express();
+
+/* Make countries available to all EJS templates */
 app.use((req, res, next) => {
-  res.locals.countries = COUNTRIES;   // available in all EJS templates
+  res.locals.countries = COUNTRIES;
   next();
 });
+
 /* Auth config */
 configurePassport(passport);
 
@@ -41,9 +54,8 @@ app.set("views", path.join(__dirname, "views"));
 app.use(expressLayouts);
 app.set("layout", "layout");
 
-/* Static assets */
+/* Static assets — serve /public/* at site root (/js, /css, /images, ...) */
 app.use(
-  "/public",
   express.static(path.join(__dirname, "..", "public"), {
     maxAge: env.nodeEnv === "production" ? "7d" : 0,
     etag: true,
@@ -52,7 +64,7 @@ app.use(
 );
 
 /* Health check (no auth, no csrf) */
-app.get("/healthz", (req, res) => res.status(200).send("ok"));
+app.get("/healthz", (_req, res) => res.status(200).send("ok"));
 
 /* Parsers */
 app.use(express.urlencoded({ extended: false, limit: "200kb" }));
@@ -73,42 +85,32 @@ app.use(
 /* Compression */
 app.use(compression());
 
-/* Session store
-   - Local dev: SQLite file store
-   - Production: Postgres via connect-pg-simple
-*/
-const usePg = env.nodeEnv === "production" && !!process.env.DATABASE_URL;
+/* --- Sessions (Postgres only) --- */
+const PgSession = connectPgSimple(session);
 
-let sessionStore;
-if (usePg) {
-  const PgSession = connectPgSimple(session);
-  // Let Express trust the Render proxy so secure cookies are set correctly
+// If behind a proxy (Render/Cloudflare), trust it so secure cookies work
+if (env.nodeEnv === "production") {
   app.set("trust proxy", 1);
-  sessionStore = new PgSession({
-    conString: process.env.DATABASE_URL,
-    createTableIfMissing: true,
-    // tableName: "session", // default
-  });
-} else {
-  const SQLiteStore = SQLiteStoreFactory(session);
-  sessionStore = new SQLiteStore({ db: "sessions.sqlite", dir: "./" });
 }
 
 app.use(
   session({
-    store: sessionStore,
-    secret: env.sessionSecret, // set SESSION_SECRET in env
+    store: new PgSession({
+      conString: process.env.DATABASE_URL,
+      createTableIfMissing: true,
+      // tableName: "session",
+    }),
+    secret: env.sessionSecret,
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: env.nodeEnv === "production", // only on HTTPS
       sameSite: "lax",
+      secure: env.nodeEnv === "production", // true on HTTPS
       maxAge: 1000 * 60 * 60 * 8, // 8 hours
-      // If you want the cookie shared across apex and www, uncomment:
-      // domain: ".harvestisplenty.uk",
+      // domain: ".harvestisplenty.uk", // uncomment if sharing across apex & www
     },
-    // name: "e3000.sid", // optional custom cookie name
+    // name: "e3000.sid",
   })
 );
 
@@ -163,7 +165,7 @@ app.use((err, req, res, next) => {
   console.error(err);
   if (res.headersSent) return next(err);
   const status = err.statusCode || err.status || 500;
-  const isProd = process.env.NODE_ENV === "production";
+  const isProd = env.nodeEnv === "production";
   const view = status === 404 ? "errors/404" : "errors/500";
   res.status(status).render(view, {
     title: status === 404 ? "Not Found" : "Server Error",
