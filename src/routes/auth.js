@@ -25,6 +25,7 @@ passport.use(
     }
   })
 );
+
 passport.serializeUser((u, done) => done(null, u.id));
 passport.deserializeUser(async (id, done) => {
   try {
@@ -90,23 +91,23 @@ router.get("/register", (req, res) => {
     countries: COUNTRIES,
   });
 });
+
 router.get("/terms", (req, res) => {
   res.render("auth/terms", { title: "Terms & Data Policy" });
 });
 
-
 // Validate + create
 router.post(
   "/register",
-  // Tell the validator which view to render on error (fixes the previous 500-page render)
+  // validateBody will pass through on success, or render the view you specify on failure
   validateBody(RegistrationSchema, { view: "auth/register", title: "Register" }),
   async (req, res, next) => {
     try {
-      // Guaranteed by validateBody; fall back to req.body just in case
       const data = req.validated ?? req.body;
       const { name, email, password, gender, ageRange, nationality } = data;
 
       const hashed = await bcrypt.hash(password, 12);
+
       const user = await prisma.user.create({
         data: {
           name,
@@ -119,15 +120,15 @@ router.post(
         },
       });
 
-      // Auto-login then redirect
       req.logIn(user, (err) => {
         if (err) return next(err);
         const intended = pickNext(req.body.next || req.query.next || "");
         return res.redirect(intended || "/dashboard");
       });
     } catch (e) {
-      // Handle duplicate email and bounce back to the form with values + errors
+      // Prisma duplicate key error (unique constraint)
       const duplicate = e && e.code === "P2002";
+
       return res.status(400).render("auth/register", {
         title: "Register",
         csrfToken: req.csrfToken(),
@@ -142,8 +143,8 @@ router.post(
         errors: {
           _form: [duplicate ? "Email already in use" : "Please fix the highlighted fields"],
           ...(duplicate ? { email: ["Email already in use"] } : {}),
-          countries: COUNTRIES,
         },
+        countries: COUNTRIES, // make sure the template always gets this
       });
     }
   }

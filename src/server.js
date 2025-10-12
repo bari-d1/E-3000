@@ -5,31 +5,36 @@ import path from "path";
 import { fileURLToPath } from "url";
 import session from "express-session";
 import SQLiteStoreFactory from "connect-sqlite3";
+import connectPgSimple from "connect-pg-simple";
 import passport from "passport";
 import methodOverride from "method-override";
 import csrf from "csurf";
 import compression from "compression";
+
 import resourcesRouter from "./routes/resources.js";
 import authRoutes from "./routes/auth.js";
 import sessionRoutes from "./routes/sessions.js";
 import dashboardRoutes from "./routes/dashboard.js";
 import adminRoutes from "./routes/admin.js";
+import faqRouter from "./routes/faq.js";
+import { COUNTRIES } from "./lib/countries.js";
 // import adminFlagsRoutes from "./routes/adminFlags.js";
+
 import { applySecurity } from "./middleware/security.js";
 import { env } from "./config/env.js";
 import { configurePassport } from "./config/passport.js";
-import faqRouter from "./routes/faq.js";
-
-
-
-
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const SQLiteStore = SQLiteStoreFactory(session);
 
 const app = express();
+app.use((req, res, next) => {
+  res.locals.countries = COUNTRIES;   // available in all EJS templates
+  next();
+});
+/* Auth config */
 configurePassport(passport);
+
 /* Views */
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
@@ -45,6 +50,9 @@ app.use(
     fallthrough: true,
   })
 );
+
+/* Health check (no auth, no csrf) */
+app.get("/healthz", (req, res) => res.status(200).send("ok"));
 
 /* Parsers */
 app.use(express.urlencoded({ extended: false, limit: "200kb" }));
@@ -65,19 +73,42 @@ app.use(
 /* Compression */
 app.use(compression());
 
-/* Session */
+/* Session store
+   - Local dev: SQLite file store
+   - Production: Postgres via connect-pg-simple
+*/
+const usePg = env.nodeEnv === "production" && !!process.env.DATABASE_URL;
+
+let sessionStore;
+if (usePg) {
+  const PgSession = connectPgSimple(session);
+  // Let Express trust the Render proxy so secure cookies are set correctly
+  app.set("trust proxy", 1);
+  sessionStore = new PgSession({
+    conString: process.env.DATABASE_URL,
+    createTableIfMissing: true,
+    // tableName: "session", // default
+  });
+} else {
+  const SQLiteStore = SQLiteStoreFactory(session);
+  sessionStore = new SQLiteStore({ db: "sessions.sqlite", dir: "./" });
+}
+
 app.use(
   session({
-    store: new SQLiteStore({ db: "sessions.sqlite", dir: "./" }),
-    secret: env.sessionSecret,
+    store: sessionStore,
+    secret: env.sessionSecret, // set SESSION_SECRET in env
     resave: false,
     saveUninitialized: false,
     cookie: {
       httpOnly: true,
-      secure: env.nodeEnv === "production",
+      secure: env.nodeEnv === "production", // only on HTTPS
       sameSite: "lax",
-      maxAge: 1000 * 60 * 60 * 8,
+      maxAge: 1000 * 60 * 60 * 8, // 8 hours
+      // If you want the cookie shared across apex and www, uncomment:
+      // domain: ".harvestisplenty.uk",
     },
+    // name: "e3000.sid", // optional custom cookie name
   })
 );
 
@@ -88,17 +119,14 @@ app.use(passport.session());
 /* Security headers, rate limits, etc */
 applySecurity(app);
 
-/* CSRF, then expose helpers to views */
+/* CSRF then locals for views */
 app.use(csrf());
 app.use((req, res, next) => {
   res.locals.csrfToken = req.csrfToken();
-  res.locals.user = req.user || null; // passport populates req.user
+  res.locals.user = req.user || null;
   res.locals.env = env.nodeEnv;
   next();
 });
-
-/* for static files*/
-app.use(express.static(path.join(__dirname, "../public")));
 
 /* Routes */
 app.use(authRoutes);
@@ -107,7 +135,6 @@ app.use(dashboardRoutes);
 app.use(adminRoutes);
 app.use(resourcesRouter);
 app.use(faqRouter);
-
 // app.use(adminFlagsRoutes);
 
 /* Home */
@@ -117,7 +144,6 @@ app.get("/", (req, res) => {
   }
   return res.redirect("/login?next=/dashboard");
 });
-
 
 /* 404 */
 app.use((req, res) => {
@@ -133,32 +159,17 @@ app.use((err, req, res, next) => {
 });
 
 /* Fallback error handler */
-// app.use((err, req, res, next) => {
-//   console.error(err);
-//   const status = err.status || 500;
-//   res.status(status).render("errors/500", { title: "Server Error", error: env.nodeEnv === "production" ? null : err });
-// });
-
 app.use((err, req, res, next) => {
   console.error(err);
-
   if (res.headersSent) return next(err);
-
   const status = err.statusCode || err.status || 500;
   const isProd = process.env.NODE_ENV === "production";
   const view = status === 404 ? "errors/404" : "errors/500";
-
   res.status(status).render(view, {
     title: status === 404 ? "Not Found" : "Server Error",
-    error: isProd ? null : err,   // your 500.ejs must handle null/undefined
+    error: isProd ? null : err,
   });
 });
-
-
-
-
-
-
 
 /* Start */
 app.listen(env.port, () => {

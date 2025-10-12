@@ -36,4 +36,137 @@
 
   <!-- Date -->
   <label class="grid gap-1">
-    <span class="te
+    <span class="text-sm text-gray-700">Date and time</span>
+    <input
+      type="datetime-local"
+      name="sessionDate"
+      max="<%= new Date().toISOString().slice(0,16) %>"
+      value="<%= values?.sessionDate ? new Date(values.sessionDate).toISOString().slice(0,16) : '' %>"
+      class="rounded-xl px-3 py-2 text-sm outline-none focus:ring-2
+             <%= hasErr('sessionDate') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+      aria-invalid="<%= hasErr('sessionDate') ? 'true' : 'false' %>"
+      aria-describedby="<%= hasErr('sessionDate') ? 'err-sessionDate' : '' %>"
+      required
+    />
+    <% if (hasErr('sessionDate')) { %>
+      <p id="err-sessionDate" class="text-sm text-rose-700"><%= errMsg('sessionDate') %></p>
+    <% } %>
+  </label>
+
+    <!-- Location -->
+  <label class="grid gap-1">
+    <span class="text-sm text-gray-700">Location</span>
+    <input
+      type="text"
+      name="locationText"
+      placeholder="e.g., Manchester Piccadilly, UK"
+      maxlength="120"
+      autocomplete="street-address"
+      value="<%= (values && values.locationText) ? values.locationText : '' %>"
+      class="rounded-xl px-3 py-2 text-sm outline-none focus:ring-2
+              <%= hasErr('locationText') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+      aria-invalid="<%= hasErr('locationText') ? 'true' : 'false' %>"
+      aria-describedby="<%= hasErr('locationText') ? 'err-locationText' : '' %>"
+    />
+    <% if (hasErr('locationText')) { %>
+      <p id="err-locationText" class="text-sm text-rose-700"><%= errMsg('locationText') %></p>
+    <% } %>
+  </label>
+  
+
+  <!-- Engaged -->
+  <label class="grid gap-1">
+    <span class="text-sm text-gray-700">Engaged</span>
+    <input
+      type="number" name="engagedCount" min="0"
+      value="<%= values?.engagedCount ?? '' %>"
+      class="rounded-xl px-3 py-2 text-sm outline-none focus:ring-2
+             <%= hasErr('engagedCount') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+      aria-invalid="<%= hasErr('engagedCount') ? 'true' : 'false' %>"
+      aria-describedby="<%= hasErr('engagedCount') ? 'err-engagedCount' : '' %>"
+      required
+    />
+    <% if (hasErr('engagedCount')) { %>
+      <p id="err-engagedCount" class="text-sm text-rose-700"><%= errMsg('engagedCount') %></p>
+    <% } %>
+  </label>
+
+  <!-- Gospel -->
+  <label class="grid gap-1">
+    <span class="text-sm text-gray-700">Gospel</span>
+    <input
+      type="number" name="gospelCount" min="0"
+      value="<%= values?.gospelCount ?? '' %>"
+      class="rounded-xl px-3 py-2 text-sm outline-none focus:ring-2
+             <%= hasErr('gospelCount') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+      aria-invalid="<%= hasErr('gospelCount') ? 'true' : 'false' %>"
+      aria-describedby="<%= hasErr('gospelCount') ? 'err-gospelCount' : '' %>"
+      required
+    />
+    <% if (hasErr('gospelCount')) { %>
+      <p id="err-gospelCount" class="text-sm text-rose-700"><%= errMsg('gospelCount') %></p>
+    <% } %>
+  </label>
+
+  <!-- Witness -->
+  <label class="grid gap-1">
+    <span class="text-sm text-gray-700">Witness</span>
+    <input
+      type="number" name="witnessCount" min="0"
+      value="<%= values?.witnessCount ?? '' %>"
+      class="rounded-xl px-3 py-2 text-sm outline-none focus:ring-2
+             <%= hasErr('witnessCount') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+      aria-invalid="<%= hasErr('witnessCount') ? 'true' : 'false' %>"
+      aria-describedby="<%= hasErr('witnessCount') ? 'err-witnessCount' : '' %>"
+      required
+    />
+    <% if (hasErr('witnessCount')) { %>
+      <p id="err-witnessCount" class="text-sm text-rose-700"><%= errMsg('witnessCount') %></p>
+    <% } %>
+  </label>
+
+  <!-- Decisions -->
+  <label class="grid gap-1">
+    <span class="text-sm text-gray-700">Decisions</span>
+    <input
+      type="number" name="decisionCount" min="0"
+      value="<%= values?.decisionCount ?? '' %>"
+      class="rounded-xl px-3 py-2 text-sm outline-none focus:ring-2
+             <%= hasErr('decisionCount') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+      aria-invalid="<%= hasErr('decisionCount') ? 'true' : 'false' %>"
+      aria-describedby="<%= hasErr('decisionCount') ? 'err-decisionCount' : '' %>"
+      required
+    />
+    <% if (hasErr('decisionCount')) { %>
+      <p id="err-decisionCount" class="text-sm text-rose-700"><%= errMsg('decisionCount') %></p>
+    <% } %>
+  </label>
+
+  <!-- Prayed -->
+  <label class="grid gap-1">
+    <span class="text-sm text-gray-700">Prayed</span>
+    <input
+      type="number" name="prayedCount" min="0"
+      value="<%= values?.prayedCount ?? '' %>"
+      class="rounded-xl px-3 py-2 text-sm outline-none focus:ring-2
+             <%= hasErr('prayedCount') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+      aria-invalid="<%= hasErr('prayedCount') ? 'true' : 'false' %>"
+      aria-describedby="<%= hasErr('prayedCount') ? 'err-prayedCount' : '' %>"
+      required
+    />
+    <% if (hasErr('prayedCount')) { %>
+      <p id="err-prayedCount" class="text-sm text-rose-700"><%= errMsg('prayedCount') %></p>
+    <% } %>
+  </label>
+
+  <!-- Submit -->
+  <div class="mt-2 flex items-center justify-between">
+    <a href="/dashboard" class="text-sm text-gray-600 hover:underline">Cancel</a>
+    <button type="submit"
+            class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500">
+      Save session
+    </button>
+  </div>
+</form>
+
+</div>
