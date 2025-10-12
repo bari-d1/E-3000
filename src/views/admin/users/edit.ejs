@@ -1,0 +1,132 @@
+<!-- views/admin/users/edit.ejs -->
+<div class="mx-auto max-w-2xl p-4 sm:p-6">
+  <div class="mb-4 flex items-center justify-between">
+    <h1 class="text-2xl font-semibold tracking-tight"><%= title || "Edit User" %></h1>
+    <a href="/admin/users" class="text-sm text-gray-600 hover:underline">← Back to users</a>
+  </div>
+
+  <% 
+    // helpers for field errors (supports either { _form, name:[] } or { formErrors, fieldErrors:{...} })
+    const _formErrors = (errors?. _form) || (errors?.formErrors) || (errors?.fieldErrors?._form) || [];
+    const fieldErrors = errors?.fieldErrors || errors || {};
+    const hasErr = (n) => Array.isArray(fieldErrors[n]) && fieldErrors[n].length > 0;
+    const errMsg = (n) => hasErr(n) ? fieldErrors[n][0] : null;
+
+    // value helper: prefer submitted values, else user record
+    const v = (k) => (typeof values?.[k] !== "undefined" ? values[k] : (user?.[k] ?? ""));
+  %>
+
+  <% if (_formErrors.length) { %>
+    <div class="mb-4 rounded-xl bg-rose-50 p-3 text-rose-700 ring-1 ring-rose-200">
+      <ul class="list-disc pl-5">
+        <% _formErrors.forEach(function(m){ %><li><%= m %></li><% }) %>
+      </ul>
+    </div>
+  <% } %>
+
+  <form method="POST" action="/admin/users/<%= user.id %>" class="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100" novalidate>
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <input type="hidden" name="_method" value="PUT">
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <!-- Name -->
+      <label class="grid gap-1 sm:col-span-2">
+        <span class="text-sm text-gray-700">Full name</span>
+        <input
+          name="name"
+          value="<%= v('name') %>"
+          class="w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2
+                 <%= hasErr('name') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+          aria-invalid="<%= hasErr('name') ? 'true' : 'false' %>"
+          aria-describedby="<%= hasErr('name') ? 'err-name' : '' %>"
+          required
+        />
+        <% if (hasErr('name')) { %><p id="err-name" class="text-sm text-rose-700"><%= errMsg('name') %></p><% } %>
+      </label>
+
+      <!-- Email -->
+      <label class="grid gap-1 sm:col-span-2">
+        <span class="text-sm text-gray-700">Email</span>
+        <input
+          type="email"
+          name="email"
+          value="<%= v('email') %>"
+          class="w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2
+                 <%= hasErr('email') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+          aria-invalid="<%= hasErr('email') ? 'true' : 'false' %>"
+          aria-describedby="<%= hasErr('email') ? 'err-email' : '' %>"
+          required
+        />
+        <% if (hasErr('email')) { %><p id="err-email" class="text-sm text-rose-700"><%= errMsg('email') %></p><% } %>
+      </label>
+
+      <!-- Gender -->
+      <label class="grid gap-1">
+        <span class="text-sm text-gray-700">Gender</span>
+        <select
+          name="gender"
+          class="w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2
+                 <%= hasErr('gender') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+          aria-invalid="<%= hasErr('gender') ? 'true' : 'false' %>"
+          aria-describedby="<%= hasErr('gender') ? 'err-gender' : '' %>"
+        >
+          <option value="">(unchanged)</option>
+          <option value="Male"   <%= v('gender') === "Male"   ? "selected" : "" %>>Male</option>
+          <option value="Female" <%= v('gender') === "Female" ? "selected" : "" %>>Female</option>
+          <option value="Other"  <%= v('gender') === "Other"  ? "selected" : "" %>>Other</option>
+        </select>
+        <% if (hasErr('gender')) { %><p id="err-gender" class="text-sm text-rose-700"><%= errMsg('gender') %></p><% } %>
+      </label>
+
+      <!-- Age range -->
+      <label class="grid gap-1">
+        <span class="text-sm text-gray-700">Age range</span>
+        <select
+          name="ageRange"
+          class="w-full rounded-xl border px-3 py-2 text-sm outline-none focus:ring-2
+                 <%= hasErr('ageRange') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+          aria-invalid="<%= hasErr('ageRange') ? 'true' : 'false' %>"
+          aria-describedby="<%= hasErr('ageRange') ? 'err-ageRange' : '' %>"
+        >
+          <option value="">(unchanged)</option>
+          <% ["Under 18","18-24","25-34","35-44","45-54","55+"].forEach(function(opt){ %>
+            <option value="<%= opt %>" <%= v('ageRange') === opt ? "selected" : "" %>><%= opt %></option>
+          <% }) %>
+        </select>
+        <% if (hasErr('ageRange')) { %><p id="err-ageRange" class="text-sm text-rose-700"><%= errMsg('ageRange') %></p><% } %>
+      </label>
+
+      <!-- Nationality -->
+
+
+<label class="block">
+  <span class="mb-1.5 block text-sm text-gray-700">Nationality</span>
+  <select
+    name="nationality"
+    autocomplete="country-name"
+    class="w-full rounded-xl border bg-white px-3.5 py-2.5 text-sm outline-none focus:ring-2
+           <%= hasErr('nationality') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+    aria-invalid="<%= hasErr('nationality') ? 'true' : 'false' %>"
+    aria-describedby="<%= hasErr('nationality') ? 'err-nationality' : '' %>"
+    required
+  >
+    <option value="">Select nationality</option>
+    <% (countries || []).forEach(function(c) { %>
+      <option value="<%= c %>" <%= (values?.nationality || user?.nationality) === c ? "selected" : "" %>><%= c %></option>
+    <% }) %>
+  </select>
+  <% if (hasErr('nationality')) { %>
+    <p id="err-nationality" class="mt-1 text-xs text-rose-700"><%= errMsg('nationality') %></p>
+  <% } %>
+</label>
+
+    </div>
+
+    <div class="mt-5 flex items-center justify-between">
+      <a href="/admin/users" class="text-sm text-gray-600 hover:underline">Cancel</a>
+      <button type="submit" class="inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow hover:bg-blue-500">
+        Save changes
+      </button>
+    </div>
+  </form>
+</div>

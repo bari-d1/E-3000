@@ -1,0 +1,44 @@
+# deps and builds
+node_modules/
+dist/
+build/
+.out/
+.next/
+.vercel/
+coverage/
+.tmp/
+temp/
+.cache/
+
+# env and local data
+.env
+.env.*.local
+*.local
+
+# prisma and DB
+prisma/dev.db
+*.db
+*.db-journal
+
+# logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# OS/editor junk
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+node_modules/
+dist/
+build/
+.next/
+.vercel/
+.env
+*.db
+*.db-journal
+prisma/dev.db
+.DS_Store

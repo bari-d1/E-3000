@@ -1,0 +1,15 @@
+<!-- /src/views/errors/500.ejs -->
+<h1>Server Error</h1>
+<p>Something went wrong.</p>
+
+<%
+// tolerate different names or missing locals
+const errLocal =
+  (typeof error !== 'undefined' && error) ||
+  (typeof err !== 'undefined' && err) ||
+  null;
+%>
+
+<% if (errLocal) { %>
+  <pre><%= errLocal.stack || String(errLocal) %></pre>
+<% } %>

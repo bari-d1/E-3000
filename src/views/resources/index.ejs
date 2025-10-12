@@ -1,0 +1,37 @@
+<div class="mx-auto max-w-5xl p-4 sm:p-6">
+    <div class="mb-6 flex items-center justify-between">
+      <h1 class="text-2xl font-semibold tracking-tight">Resources</h1>
+    </div>
+  
+    <% if (!videos || !videos.length) { %>
+      <div class="rounded-xl bg-white p-6 ring-1 ring-gray-100 shadow-sm">
+        <p class="text-sm text-gray-600">No videos yet. Check back soon.</p>
+      </div>
+    <% } else { %>
+      <div class="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+        <% videos.forEach(v => { %>
+          <a href="<%= v.url %>" target="_blank" rel="noopener noreferrer"
+             class="group block overflow-hidden rounded-xl bg-white ring-1 ring-gray-100 shadow-sm hover:shadow-md transition-shadow">
+            <div class="relative aspect-video bg-gray-100">
+              <% if (v.thumb) { %>
+                <img src="<%= v.thumb %>" alt="" class="h-full w-full object-cover">
+              <% } else { %>
+                <div class="flex h-full w-full items-center justify-center text-gray-400">No thumbnail</div>
+              <% } %>
+              <!-- play button -->
+              <span class="absolute inset-0 grid place-items-center">
+                <span class="inline-flex h-12 w-12 items-center justify-center rounded-full bg-black/70 text-white group-hover:bg-black/80">
+                  <svg viewBox="0 0 24 24" class="h-6 w-6" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                </span>
+              </span>
+            </div>
+            <div class="p-3">
+              <div class="line-clamp-2 text-sm font-medium text-gray-900"><%= v.title %></div>
+              <div class="mt-1 text-xs text-gray-500">YouTube</div>
+            </div>
+          </a>
+        <% }) %>
+      </div>
+    <% } %>
+  </div>
+  

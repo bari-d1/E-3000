@@ -1,0 +1,884 @@
+<!-- Header -->
+<%
+  function titleCase(str) {
+    return (str || "").toLowerCase().replace(/\b\w/g, c => c.toUpperCase());
+  }
+%>
+
+<div class="mb-6 flex items-center justify-between">
+  <div>
+    <h1 class="text-2xl font-semibold tracking-tight">Hi, <%= titleCase(user?.name || user?.firstName || "Evangelist") %> <span class="inline-block">👋</span></h1>
+  </div>
+
+  <div class="flex items-center gap-3">
+    <!-- Optional icons -->
+    <a href="/sessions/new" class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-blue-600 text-white text-sm font-medium shadow hover:bg-blue-500">
+      <svg viewBox="0 0 24 24" class="w-4 h-4" fill="none" stroke="currentColor"><path stroke-width="1.5" d="M12 5v14M5 12h14"/></svg>
+      <span class="whitespace-nowrap">New Session</span>
+    </a>
+  </div>
+</div>
+
+<!-- Stat cards -->
+<!-- Mobile: single-card auto slideshow with icons -->
+<h2 class="text-lg font-semibold mb-3 ">Church's Progress</h2> 
+<div class="md:hidden">
+  <div id="stat-rotator" class="relative max-w-[20rem] mx-auto">
+    <div class="relative h-32">
+      <!-- Engaged -->
+      <div data-slide class="absolute flex flex-col items-center justify-center inset-0 p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100 transition-opacity duration-300 ease-out transition-all duration-500 will-change-transform">
+        <div class="flex items-center justify-center gap-2 text-xs text-gray-600">
+          <span class="inline-flex p-1.5 rounded-full bg-blue-50 ring-1 ring-blue-100">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-blue-600" fill="currentColor">
+              <circle cx="12" cy="12" r="8"/>
+            </svg>
+          </span>
+          <span>Engaged</span>
+        <button
+        type="button"
+        class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+        aria-describedby="tip-engaged"
+        aria-label="What does Engaged mean?"
+      >
+        <!-- “i” icon -->
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+          <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+        </svg>
+    
+        <!-- tooltip panel -->
+        <span
+          role="tooltip"
+          id="tip-engaged"
+          class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+        >
+          People you interacted with (any meaningful conversation or contact).
+          <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+        </span>
+      </button>
+        
+          <!-- Tooltip -->
+          <span
+            role="tooltip"
+            id="tip-gospel"
+            class="pointer-events-none absolute left-1/2 top-full z-30 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg
+                   group-focus-within:block md:group-hover:block"
+          >
+          People you interacted with (any meaningful conversation or contact).
+            <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+          </span>
+        </div>
+        <div class="mt-1 text-3xl font-bold "><%= sums.engagedCount || 0 %></div>
+      </div>
+
+      <!-- Gospel -->
+      <div data-slide class="absolute flex flex-col items-center justify-center inset-0 p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100 transition-opacity duration-300 ease-out hidden transition-all duration-500 will-change-transform">
+        <div class="flex items-center justify-center gap-2 text-xs text-gray-600">
+          <span class="inline-flex p-1.5 rounded-full bg-emerald-50 ring-1 ring-emerald-100">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-emerald-600" fill="currentColor">
+              <path d="M12 2l3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/>
+            </svg>
+          </span>
+          <span>Gospel</span>
+
+          <!-- focusable 'i' button -->
+          <button
+          type="button"
+          class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+          aria-describedby="tip-gospel"
+          aria-label="What does Gospel mean?"
+        >
+          <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+            <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+          </svg>
+          <span
+            role="tooltip"
+            id="tip-gospel"
+            class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+          >
+            Heard a clear presentation of the gospel.
+            <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+          </span>
+        </button>
+        </div>
+        <div class="mt-1 text-3xl font-bold"><%= sums.gospelCount || 0 %></div>
+      </div>
+
+      <!-- Witness -->
+      <div data-slide class="absolute flex flex-col items-center justify-center inset-0 p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100 transition-opacity duration-300 ease-out hidden transition-all duration-500 will-change-transform">
+        <div class="flex items-center justify-center gap-2 text-xs text-gray-600">
+          <span class="inline-flex p-1.5 rounded-full bg-cyan-50 ring-1 ring-cyan-100">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-cyan-600" fill="currentColor">
+              <path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/>
+            </svg>
+          </span>
+          <span>Witness</span>
+
+          <!-- focusable 'i' button -->
+          <button
+          type="button"
+          class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+          aria-describedby="tip-gospel"
+          aria-label="What does Gospel mean?"
+        >
+          <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+            <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+          </svg>
+          <span
+            role="tooltip"
+            id="tip-gospel"
+            class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+          >
+          You personally testified about your experience with Jesus
+            <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+          </span>
+        </button>
+        </div>
+        <div class="mt-1 text-3xl font-bold"><%= sums.witnessCount || 0 %></div>
+      </div>
+
+      <!-- Decisions -->
+      <div data-slide class="absolute flex flex-col items-center justify-center inset-0 p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100 hidden transition-all duration-500 will-change-transform">
+        <div class="flex items-center justify-center gap-2 text-xs text-gray-600">
+          <span class="inline-flex p-1.5 rounded-full bg-amber-50 ring-1 ring-amber-100">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-amber-600" fill="currentColor">
+              <path d="M12 2l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z"/>
+            </svg>
+          </span>
+          <span>Decisions</span>
+
+          <!-- focusable 'i' button -->
+          <button
+    type="button"
+    class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+    aria-describedby="tip-gospel"
+    aria-label="What does Gospel mean?"
+  >
+    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+      <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+    </svg>
+    <span
+      role="tooltip"
+      id="tip-gospel"
+      class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+    >
+    Indicated a decision to follow Jesus.
+      <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+    </span>
+  </button>
+        </div>
+        <div class="mt-1 text-3xl font-bold"><%= sums.decisionCount || 0 %></div>
+      </div>
+
+      <!-- Prayed -->
+      <div data-slide class="absolute flex flex-col items-center justify-center inset-0 p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100 transition-opacity duration-300 ease-out hidden transition-all duration-500 will-change-transform">
+        <div class="flex items-center justify-center gap-2 text-xs text-gray-600">
+          <span class="inline-flex p-1.5 rounded-full bg-indigo-50 ring-1 ring-indigo-100">
+            <svg viewBox="0 0 24 24" class="w-4 h-4 text-indigo-600" fill="currentColor">
+              <path d="M12 21s-6-4.35-6-9a6 6 0 1112 0c0 4.65-6 9-6 9z"/>
+            </svg>
+          </span>
+          <span>Prayed</span>
+
+          <!-- focusable 'i' button -->
+          <button
+          type="button"
+          class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+          aria-describedby="tip-gospel"
+          aria-label="What does Gospel mean?"
+        >
+          <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+            <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+            <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+          </svg>
+          <span
+            role="tooltip"
+            id="tip-gospel"
+            class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+          >
+          Prayed with someone (salvation, rededication, or specific need).
+            <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+          </span>
+        </button>
+        </div>
+        <div class="mt-1 text-3xl font-bold"><%= sums.prayedCount || 0 %></div>
+      </div>
+    </div>
+
+    <!-- dots -->
+    <div class="mt-3 flex justify-center gap-1.5" aria-hidden="true">
+      <span data-dot class="h-1.5 w-3 rounded-full bg-gray-900/70"></span>
+      <span data-dot class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>
+      <span data-dot class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>
+      <span data-dot class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>
+      <span data-dot class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Desktop: grid with icons -->
+<div>
+  
+  <div class="hidden md:grid gap-4 grid-cols-5">
+    <div class="p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100">
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex p-1.5 rounded-full bg-blue-50 ring-1 ring-blue-100">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 text-blue-600" fill="currentColor">
+            <circle cx="12" cy="12" r="8"/>
+          </svg>
+        </span>
+        <span>Engaged</span>
+        <button
+        type="button"
+        class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+        aria-describedby="tip-engaged"
+        aria-label="What does Engaged mean?"
+      >
+        <!-- “i” icon -->
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+          <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+        </svg>
+    
+        <!-- tooltip panel -->
+        <span
+          role="tooltip"
+          id="tip-engaged"
+          class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+        >
+          People you interacted with (any meaningful conversation or contact).
+          <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+        </span>
+      </button>
+      </div>
+      <div class="mt-1 text-2xl font-bold"><%= sums.engagedCount || 0 %></div>
+    </div>
+  
+    <div class="p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100">
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex p-1.5 rounded-full bg-emerald-50 ring-1 ring-emerald-100">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 text-emerald-600" fill="currentColor">
+            <path d="M12 2l3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/>
+          </svg>
+        </span>
+        <span>Gospel</span>
+        <button
+        type="button"
+        class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+        aria-describedby="tip-gospel"
+        aria-label="What does Gospel mean?"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+          <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+        </svg>
+        <span
+          role="tooltip"
+          id="tip-gospel"
+          class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+        >
+          Heard a clear presentation of the gospel.
+          <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+        </span>
+      </button>
+      </div>
+      <div class="mt-1 text-2xl font-bold"><%= sums.gospelCount || 0 %></div>
+    </div>
+  
+    <div class="p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100">
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex p-1.5 rounded-full bg-cyan-50 ring-1 ring-cyan-100">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 text-cyan-600" fill="currentColor">
+            <path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/>
+          </svg>
+        </span>
+        <span>Witness</span>
+        <button
+        type="button"
+        class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+        aria-describedby="tip-gospel"
+        aria-label="What does Gospel mean?"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+          <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+        </svg>
+        <span
+          role="tooltip"
+          id="tip-gospel"
+          class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+        >
+        You personally testified about your experience with Jesus
+          <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+        </span>
+      </button>
+      </div>
+      <div class="mt-1 text-2xl font-bold"><%= sums.witnessCount || 0 %></div>
+    </div>
+  
+    <div class="p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100">
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex p-1.5 rounded-full bg-amber-50 ring-1 ring-amber-100">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 text-amber-600" fill="currentColor">
+            <path d="M12 2l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z"/>
+          </svg>
+        </span>
+        <span>Decisions</span>
+        <button
+    type="button"
+    class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+    aria-describedby="tip-gospel"
+    aria-label="What does Gospel mean?"
+  >
+    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+      <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+    </svg>
+    <span
+      role="tooltip"
+      id="tip-gospel"
+      class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+    >
+    Indicated a decision to follow Jesus.
+      <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+    </span>
+  </button>
+      </div>
+      <div class="mt-1 text-2xl font-bold"><%= sums.decisionCount || 0 %></div>
+    </div>
+  
+    <div class="p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100">
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex p-1.5 rounded-full bg-indigo-50 ring-1 ring-indigo-100">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 text-indigo-600" fill="currentColor">
+            <path d="M12 21s-6-4.35-6-9a6 6 0 1112 0c0 4.65-6 9-6 9z"/>
+          </svg>
+        </span>
+        <span>Prayed</span>
+        <button
+    type="button"
+    class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+    aria-describedby="tip-gospel"
+    aria-label="What does Gospel mean?"
+  >
+    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+      <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+    </svg>
+    <span
+      role="tooltip"
+      id="tip-gospel"
+      class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+    >
+    Prayed with someone (salvation, rededication, or specific need).
+      <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+    </span>
+  </button>
+      </div>
+      <div class="mt-1 text-2xl font-bold"><%= sums.prayedCount || 0 %></div>
+    </div>
+  </div>
+</div>
+
+
+
+<!-- Your Progress -->
+<div class="mt-6">
+  <div class="mb-3 flex items-center justify-between">
+    <h2 class="text-lg font-semibold">Your Progress</h2>
+    <!-- optional micro-hint -->
+    <!-- <span class="text-xs text-gray-500">Approved sessions only</span> -->
+  </div>
+
+  <!-- Mobile: single-card auto slideshow (same pattern as church) -->
+  <div class="md:hidden">
+    <div id="my-stat-rotator" class="relative">
+      <div class="relative h-32">
+        <!-- Engaged -->
+        <div data-slide-my class="absolute flex flex-col items-center justify-center inset-0 p-4 bg-white inset-0 p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100 transition-opacity duration-300 ease-out">
+          <div class="flex items-center gap-2 text-xs text-gray-600">
+            <span class="inline-flex p-1.5 rounded-full bg-blue-50 ring-1 ring-blue-100">
+              <svg viewBox="0 0 24 24" class="w-4 h-4 text-blue-600" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+            </span>
+            <span>Engaged</span>
+            <button
+            type="button"
+            class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+            aria-describedby="tip-engaged"
+            aria-label="What does Engaged mean?"
+          >
+            <!-- “i” icon -->
+            <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+              <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+              <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+            </svg>
+        
+            <!-- tooltip panel -->
+            <span
+              role="tooltip"
+              id="tip-engaged"
+              class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+            >
+              People you interacted with (any meaningful conversation or contact).
+              <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+            </span>
+          </button>
+          </div>
+          <div class="mt-1 text-3xl font-bold text-center"><%= my.engaged %></div>
+        </div>
+
+        <!-- Gospel -->
+        <div data-slide-my class="absolute flex flex-col items-center justify-center inset-0 p-4 bg-white inset-0 p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100 transition-opacity duration-300 ease-out hidden">
+          <div class="flex items-center gap-2 text-xs text-gray-600">
+            <span class="inline-flex p-1.5 rounded-full bg-emerald-50 ring-1 ring-emerald-100">
+              <svg viewBox="0 0 24 24" class="w-4 h-4 text-emerald-600" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/></svg>
+            </span>
+            <span>Gospel</span>
+        <button
+        type="button"
+        class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+        aria-describedby="tip-gospel"
+        aria-label="What does Gospel mean?"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+          <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+        </svg>
+        <span
+          role="tooltip"
+          id="tip-gospel"
+          class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+        >
+          Heard a clear presentation of the gospel.
+          <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+        </span>
+      </button>
+          </div>
+          <div class="mt-1 text-3xl font-bold text-center"><%= my.gospel %></div>
+        </div>
+
+        <!-- Witness -->
+        <div data-slide-my class="absolute flex flex-col items-center justify-center inset-0 p-4 bg-white inset-0 p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100 transition-opacity duration-300 ease-out hidden">
+          <div class="flex items-center gap-2 text-xs text-gray-600">
+            <span class="inline-flex p-1.5 rounded-full bg-cyan-50 ring-1 ring-cyan-100">
+              <svg viewBox="0 0 24 24" class="w-4 h-4 text-cyan-600" fill="currentColor"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/></svg>
+            </span>
+            <span>Witness</span>
+        <button
+        type="button"
+        class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+        aria-describedby="tip-gospel"
+        aria-label="What does Gospel mean?"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+          <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+        </svg>
+        <span
+          role="tooltip"
+          id="tip-gospel"
+          class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+        >
+        You personally testified about your experience with Jesus
+          <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+        </span>
+      </button>
+          </div>
+          <div class="mt-1 text-3xl font-bold text-center"><%= my.witness %></div>
+        </div>
+
+        <!-- Decisions -->
+        <div data-slide-my class="absolute flex flex-col items-center justify-center inset-0 p-4 bg-white inset-0 p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100 transition-opacity duration-300 ease-out hidden">
+          <div class="flex items-center gap-2 text-xs text-gray-600">
+            <span class="inline-flex p-1.5 rounded-full bg-amber-50 ring-1 ring-amber-100">
+              <svg viewBox="0 0 24 24" class="w-4 h-4 text-amber-600" fill="currentColor"><path d="M12 2l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z"/></svg>
+            </span>
+            <span>Decisions</span>
+        <button
+    type="button"
+    class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+    aria-describedby="tip-gospel"
+    aria-label="What does Gospel mean?"
+  >
+    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+      <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+    </svg>
+    <span
+      role="tooltip"
+      id="tip-gospel"
+      class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+    >
+    Indicated a decision to follow Jesus.
+      <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+    </span>
+  </button>
+          </div>
+          <div class="mt-1 text-3xl font-bold text-center"><%= my.decision %></div>
+        </div>
+
+        <!-- Prayed -->
+        <div data-slide-my class="absolute flex flex-col items-center justify-center inset-0 p-4 bg-white inset-0 p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100 transition-opacity duration-300 ease-out hidden">
+          <div class="flex items-center gap-2 text-xs text-gray-600">
+            <span class="inline-flex p-1.5 rounded-full bg-indigo-50 ring-1 ring-indigo-100">
+              <svg viewBox="0 0 24 24" class="w-4 h-4 text-indigo-600" fill="currentColor"><path d="M12 21s-6-4.35-6-9a6 6 0 1112 0c0 4.65-6 9-6 9z"/></svg>
+            </span>
+            <span>Prayed</span>
+        <button
+    type="button"
+    class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+    aria-describedby="tip-gospel"
+    aria-label="What does Gospel mean?"
+  >
+    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+      <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+    </svg>
+    <span
+      role="tooltip"
+      id="tip-gospel"
+      class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+    >
+    Prayed with someone (salvation, rededication, or specific need).
+      <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+    </span>
+  </button>
+          </div>
+          <div class="mt-1 text-3xl font-bold text-center"><%= my.prayed %></div>
+        </div>
+      </div>
+
+      <!-- dots -->
+      <div class="mt-3 flex justify-center gap-1.5" aria-hidden="true">
+        <span data-dot-my class="h-1.5 w-3 rounded-full bg-gray-900/70"></span>
+        <span data-dot-my class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>
+        <span data-dot-my class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>
+        <span data-dot-my class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>
+        <span data-dot-my class="h-1.5 w-1.5 rounded-full bg-gray-300"></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Desktop: grid -->
+  <div class="hidden md:grid gap-4 grid-cols-5">
+    <div class="p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100">
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex p-1.5 rounded-full bg-blue-50 ring-1 ring-blue-100">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 text-blue-600" fill="currentColor"><circle cx="12" cy="12" r="8"/></svg>
+        </span>
+        <span>Engaged</span>
+        <button
+        type="button"
+        class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+        aria-describedby="tip-engaged"
+        aria-label="What does Engaged mean?"
+      >
+        <!-- “i” icon -->
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+          <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+        </svg>
+    
+        <!-- tooltip panel -->
+        <span
+          role="tooltip"
+          id="tip-engaged"
+          class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+        >
+          People you interacted with (any meaningful conversation or contact).
+          <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+        </span>
+      </button>
+      </div>
+      <div class="mt-1 text-2xl font-bold"><%= my.engaged %></div>
+    </div>
+
+    <div class="p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100">
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex p-1.5 rounded-full bg-emerald-50 ring-1 ring-emerald-100">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 text-emerald-600" fill="currentColor"><path d="M12 2l3 7h7l-5.5 4 2 7L12 17l-6.5 3 2-7L2 9h7z"/></svg>
+        </span>
+        <span>Gospel</span>
+        <button
+        type="button"
+        class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+        aria-describedby="tip-gospel"
+        aria-label="What does Gospel mean?"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+          <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+        </svg>
+        <span
+          role="tooltip"
+          id="tip-gospel"
+          class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+        >
+          Heard a clear presentation of the gospel.
+          <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+        </span>
+      </button>
+      </div>
+      <div class="mt-1 text-2xl font-bold"><%= my.gospel %></div>
+    </div>
+
+    <div class="p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100">
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex p-1.5 rounded-full bg-cyan-50 ring-1 ring-cyan-100">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 text-cyan-600" fill="currentColor"><path d="M12 3a9 9 0 100 18 9 9 0 000-18z"/></svg>
+        </span>
+        <span>Witness</span>
+        <button
+        type="button"
+        class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+        aria-describedby="tip-gospel"
+        aria-label="What does Gospel mean?"
+      >
+        <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+          <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+          <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+        </svg>
+        <span
+          role="tooltip"
+          id="tip-gospel"
+          class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+        >
+        Received a personal testimony about Jesus.
+          <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+        </span>
+      </button>
+      </div>
+      <div class="mt-1 text-2xl font-bold"><%= my.witness %></div>
+    </div>
+
+    <div class="p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100">
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex p-1.5 rounded-full bg-amber-50 ring-1 ring-amber-100">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 text-amber-600" fill="currentColor"><path d="M12 2l9 4-9 4-9-4 9-4zm0 8l9 4-9 4-9-4 9-4z"/></svg>
+        </span>
+        <span>Decisions</span>
+        <button
+    type="button"
+    class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+    aria-describedby="tip-gospel"
+    aria-label="What does Gospel mean?"
+  >
+    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+      <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+    </svg>
+    <span
+      role="tooltip"
+      id="tip-gospel"
+      class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+    >
+    Indicated a decision to follow Jesus.
+      <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+    </span>
+  </button>
+      </div>
+      <div class="mt-1 text-2xl font-bold"><%= my.decision %></div>
+    </div>
+
+    <div class="p-4 bg-white rounded-xl shadow-sm ring-1 ring-gray-100">
+      <div class="flex items-center gap-2 text-xs text-gray-600">
+        <span class="inline-flex p-1.5 rounded-full bg-indigo-50 ring-1 ring-indigo-100">
+          <svg viewBox="0 0 24 24" class="w-4 h-4 text-indigo-600" fill="currentColor"><path d="M12 21s-6-4.35-6-9a6 6 0 1112 0c0 4.65-6 9-6 9z"/></svg>
+        </span>
+        <span>Prayed</span>
+        <button
+    type="button"
+    class="relative ml-1 inline-flex h-5 w-5 items-center justify-center rounded-full ring-1 ring-gray-300 text-gray-600 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-300 group"
+    aria-describedby="tip-gospel"
+    aria-label="What does Gospel mean?"
+  >
+    <svg viewBox="0 0 24 24" class="h-3.5 w-3.5" fill="none" stroke="currentColor">
+      <circle cx="12" cy="12" r="9" stroke-width="1.5"></circle>
+      <path d="M12 10v6M12 7h.01" stroke-width="1.5"></path>
+    </svg>
+    <span
+      role="tooltip"
+      id="tip-gospel"
+      class="pointer-events-none absolute left-1/2 top-full z-20 mt-2 hidden w-56 -translate-x-1/2 rounded-md bg-gray-900 px-3 py-2 text-left text-xs font-medium text-white shadow-lg group-hover:block group-focus:block"
+    >
+    Prayed with someone (salvation, rededication, or specific need).
+      <span class="absolute -top-1 left-1/2 -translate-x-1/2 h-2 w-2 rotate-45 bg-gray-900"></span>
+    </span>
+  </button>
+      </div>
+      <div class="mt-1 text-2xl font-bold"><%= my.prayed %></div>
+    </div>
+  </div>
+</div>
+
+
+
+
+<!-- Entry Progress -->
+<%
+  const done = Math.max(0, (goal || 0) - (remaining || 0));
+  const percent = (goal && goal > 0) ? Math.round((done / goal) * 100) : 0;
+
+  const mine = typeof myReached !== "undefined" ? myReached : 0;
+  const myPercent = (goal && goal > 0) ? Math.min(100, Math.round((mine / goal) * 100)) : 0;
+%>
+
+<div class="mt-6 p-6 bg-white rounded-2xl shadow-sm ring-1 ring-gray-100">
+  <div class="flex items-start justify-between gap-4">
+    <div>
+      <h3 class="text-lg font-semibold tracking-tight">General Progress</h3>
+    </div>
+
+    <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-50 text-blue-700 ring-1 ring-blue-100">
+      <%= percent %>% of goal reached so far
+    </span>
+  </div>
+
+  <!-- Progress bar with your overlay -->
+  <div class="mt-5">
+    <div class="relative w-full h-3 rounded-full bg-gray-100 overflow-hidden ring-1 ring-gray-200/60">
+      <!-- Overall progress -->
+      <div
+        class="h-3 rounded-full bg-gradient-to-r from-emerald-500 to-blue-500 transition-[width] duration-500 ease-out"
+        style="width: <%- percent + '%' %>;"
+        role="progressbar"
+        aria-valuenow="<%= percent %>"
+        aria-valuemin="0"
+        aria-valuemax="100"
+        aria-label="Overall progress">
+      </div>
+
+      <!-- Your contribution overlay -->
+      <div
+        class="absolute inset-y-0 left-0 h-3 rounded-full bg-blue-600/40 transition-[width] duration-500 ease-out"
+        style="width: <%- myPercent + '%' %>;"
+        aria-hidden="true">
+      </div>
+    </div>
+
+    <!-- Numbers -->
+    <div class="mt-3 grid grid-cols-2 items-center">
+      <div class="text-base font-semibold text-gray-800">
+        <%= done %> people
+      </div>
+      <div class="text-right text-sm text-gray-500">
+        Remaining <%= remaining || 0 %> people to reach
+      </div>
+    </div>
+
+    <!-- Your totals -->
+    <div class="mt-2 flex items-center justify-between text-xs text-gray-500">
+      <div>Your contribution: <span class="font-semibold text-gray-700"><%= mine %></span> people</div>
+      <div><%= myPercent %>% of goal</div>
+    </div>
+  </div>
+
+  <div class="mt-4 flex items-center justify-between text-xs text-gray-500">
+    <div>Total goal: <span class="font-medium text-gray-700"><%= goal || 0 %></span></div>
+    <div>Updated just now</div>
+  </div>
+</div>
+
+<!-- My Sessions -->
+<!-- My Sessions -->
+<div class="mt-6 bg-white rounded-2xl shadow-sm ring-1 ring-gray-100">
+  <!-- Header -->
+  <div class="px-4 py-3 flex items-center justify-between gap-3">
+    <!-- left: icon + title -->
+    <div class="flex items-center gap-3 min-w-0">
+      <div class="inline-flex h-9 w-9 items-center justify-center rounded-xl bg-blue-50 ring-1 ring-blue-100 shrink-0">
+        <svg viewBox="0 0 24 24" class="h-5 w-5 text-blue-600" fill="none" stroke="currentColor">
+          <path stroke-width="1.6" d="M8 6h12M8 12h12M8 18h12M4 6h.01M4 12h.01M4 18h.01"/>
+        </svg>
+      </div>
+      <div class="truncate">
+        <h3 class="text-base font-semibold tracking-tight truncate sm:text-lg">My Sessions</h3>
+        <p class="text-xs text-gray-500"><%= (sessions && sessions.length) || 0 %> items</p>
+      </div>
+    </div>
+
+    <!-- right: button -->
+    <a
+      href="/sessions/new"
+      class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-blue-600 text-white text-sm font-medium shadow hover:bg-blue-500 whitespace-nowrap shrink-0"
+    >
+      <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor">
+        <path stroke-width="1.8" d="M12 5v14M5 12h14"/>
+      </svg>
+      <span>New Session</span>
+    </a>
+  </div>
+  <!-- …rest of the card… -->
+
+
+
+  <!-- Table -->
+  <div class="max-h-[420px] overflow-y-auto overflow-x-auto">
+    <table class="min-w-full text-sm">
+      <thead class="sticky top-0 z-10 bg-gray-50 text-gray-600 ring-1 ring-gray-100">
+        <tr>
+          <th class="px-3 py-3 text-left font-medium">Date</th>
+          <th class="px-3 py-3 text-left font-medium">Location</th>
+          <th class="px-3 py-3 text-right font-medium">Engaged</th>
+          <th class="px-3 py-3 text-right font-medium">Gospel</th>
+          <th class="px-3 py-3 text-right font-medium">Witness</th>
+          <th class="px-3 py-3 text-right font-medium">Decisions</th>
+          <th class="px-3 py-3 text-right font-medium">Prayed</th>
+        </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-100">
+        <% if (sessions && sessions.length) { %>
+          <% sessions.forEach(function(s){ %>
+            <tr class="hover:bg-gray-50 odd:bg-white even:bg-gray-50/40">
+
+
+              <td class="px-3 py-3 text-gray-700">
+                <%= s.sessionDate
+                      ? new Date(s.sessionDate).toLocaleString('en-GB',
+                        { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true })
+                      : "" %>
+              </td>
+
+              <td class="px-3 py-3">
+                <span class="inline-flex max-w-[20ch] truncate items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700 ring-1 ring-gray-200">
+                  <svg viewBox="0 0 24 24" class="mr-1 h-3.5 w-3.5 text-gray-500"><path fill="currentColor" d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+                  <%= s.locationText || "Not set" %>
+                </span>
+              </td>
+
+              <td class="px-3 py-3 text-right font-medium tabular-nums"><%= s.engagedCount || 0 %></td>
+              <td class="px-3 py-3 text-right font-medium tabular-nums"><%= s.gospelCount || 0 %></td>
+              <td class="px-3 py-3 text-right font-medium tabular-nums"><%= s.witnessCount || 0 %></td>
+              <td class="px-3 py-3 text-right font-medium tabular-nums"><%= s.decisionCount || 0 %></td>
+              <td class="px-3 py-3 text-right font-medium tabular-nums"><%= s.prayedCount || 0 %></td>
+            </tr>
+          <% }); %>
+        <% } else { %>
+          <!-- Empty state -->
+          <tr>
+            <td colspan="10" class="px-5 py-10 text-center">
+              <div class="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 ring-1 ring-gray-200">
+                <svg viewBox="0 0 24 24" class="h-6 w-6 text-gray-400"><path fill="currentColor" d="M5 4h14a1 1 0 011 1v12.5a1.5 1.5 0 01-1.5 1.5H7l-4 3V5a1 1 0 011-1z"/></svg>
+              </div>
+              <div class="mt-3 text-sm font-medium text-gray-800">No sessions yet</div>
+              <p class="mt-1 text-sm text-gray-500">Start by creating your first session.</p>
+              <a href="/sessions/new" class="mt-3 inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor"><path stroke-width="1.8" d="M12 5v14M5 12h14"/></svg>
+                New Session
+              </a>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+
+
+

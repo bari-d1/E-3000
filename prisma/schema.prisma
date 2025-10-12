@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  name        String
+  email       String    @unique
+  password    String
+  role        String    @default("EVANGELIST") 
+  gender      String
+  ageRange    String
+  nationality String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  sessions    Session[]
+  auditLogs   AuditLog[] @relation("AuditByUser")
+}
+
+model Session {
+  id            Int       @id @default(autoincrement())
+  sessionDate   DateTime
+  locationText  String?
+  engagedCount  Int
+  gospelCount   Int
+  witnessCount  Int
+  decisionCount Int
+  prayedCount   Int
+  notes         String?
+
+  userId Int
+  user   User   @relation(fields: [userId], references: [id])
+
+  // NEW FIELDS
+  flagged     Boolean   @default(false)
+  flagReason  String?   // why it was flagged
+  status      String    @default("APPROVED") // or "PENDING", "DECLINED"
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+
+model AuditLog {
+  id        Int      @id @default(autoincrement())
+  entity    String
+  entityId  Int
+  action    String
+  diffJson  String?
+  byUserId  Int
+  byUser    User     @relation("AuditByUser", fields: [byUserId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+model Setting {
+  id        Int      @id @default(autoincrement())
+  key       String   @unique
+  valueJson String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

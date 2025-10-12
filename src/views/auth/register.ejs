@@ -1,0 +1,177 @@
+<!-- views/auth/register.ejs -->
+<div class="mx-auto max-w-md p-6 sm:p-6">
+  <div class="rounded-2xl bg-white p-7 shadow-sm ring-1 ring-gray-100">
+    <div class="mb-5 text-center">
+      <h1 class="text-2xl font-semibold tracking-tight">Create your account</h1>
+      <p class="mt-1 text-base text-gray-600">Join and start logging sessions</p>
+    </div>
+
+    <% if (errors && errors._form && errors._form.length) { %>
+      <div class="mb-4 rounded-xl bg-rose-50 p-3 text-base text-rose-700 ring-1 ring-rose-200">
+        <ul class="list-disc pl-5">
+          <% errors._form.forEach(function(msg){ %><li><%= msg %></li><% }) %>
+        </ul>
+      </div>
+    <% } %>
+
+    <form class="grid gap-4" method="POST" action="/register" novalidate>
+      <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+      <input type="hidden" name="next" value="<%= (typeof next !== 'undefined' && next) ? next : '' %>">
+
+      <!-- Name -->
+      <label class="block">
+        <span class="mb-1.5 block text-base text-gray-700">Full name</span>
+        <input
+          class="w-full rounded-2xl border border-gray-200 bg-white px-3.5 py-3 text-base outline-none focus:ring-2 focus:ring-blue-200"
+          type="text"
+          name="name"
+          autocomplete="name"
+          placeholder="Jane Doe"
+          required
+          value="<%= (values && values.name) ? values.name : '' %>"
+          aria-invalid="<%= (errors && errors.name && errors.name.length) ? 'true' : 'false' %>"
+        />
+        <% if (errors && errors.name && errors.name.length) { %>
+          <p class="mt-1 text-sm text-rose-700"><%= errors.name[0] %></p>
+        <% } %>
+      </label>
+
+      <!-- Email -->
+      <label class="block">
+        <span class="mb-1.5 block text-base text-gray-700">Email</span>
+        <input
+          class="w-full rounded-2xl border border-gray-200 bg-white px-3.5 py-3 text-base outline-none focus:ring-2 focus:ring-blue-200"
+          type="email"
+          name="email"
+          inputmode="email"
+          autocomplete="email"
+          placeholder="you@example.com"
+          required
+          value="<%= (values && values.email) ? values.email : '' %>"
+          aria-invalid="<%= (errors && errors.email && errors.email.length) ? 'true' : 'false' %>"
+        />
+        <% if (errors && errors.email && errors.email.length) { %>
+          <p class="mt-1 text-sm text-rose-700"><%= errors.email[0] %></p>
+        <% } %>
+      </label>
+
+      <!-- Password + show/hide -->
+      <label class="block">
+        <span class="mb-1.5 block text-base text-gray-700">Password</span>
+        <div class="relative">
+          <input
+            id="reg-password"
+            class="w-full rounded-2xl border border-gray-200 bg-white px-3.5 py-3 pr-12 text-base outline-none focus:ring-2 focus:ring-blue-200"
+            type="password"
+            name="password"
+            autocomplete="new-password"
+            minlength="8"
+            placeholder="At least 8 characters"
+            required
+            aria-invalid="<%= (errors && errors.password && errors.password.length) ? 'true' : 'false' %>"
+          />
+          <button
+            type="button"
+            class="absolute inset-y-0 right-0 my-1.5 mr-1.5 inline-flex items-center rounded-xl px-2.5 text-sm text-gray-700 ring-1 ring-gray-200 hover:bg-gray-50"
+            data-toggle-password="reg-password"
+            aria-label="Show password"
+          >
+            Show
+          </button>
+        </div>
+        <% if (errors && errors.password && errors.password.length) { %>
+          <p class="mt-1 text-sm text-rose-700"><%= errors.password[0] %></p>
+        <% } else { %>
+          <p class="mt-1 text-sm text-gray-500">Use 8+ characters with a mix of letters and numbers.</p>
+        <% } %>
+      </label>
+
+      <!-- Gender -->
+      <label class="block">
+        <span class="mb-1.5 block text-base text-gray-700">Gender</span>
+        <select
+          class="w-full rounded-2xl border border-gray-200 bg-white px-3.5 py-3 text-base outline-none focus:ring-2 focus:ring-blue-200"
+          name="gender"
+          required
+          aria-invalid="<%= (errors && errors.gender && errors.gender.length) ? 'true' : 'false' %>"
+        >
+          <option value="">Select gender</option>
+          <option value="Male"   <%= (values && values.gender === 'Male')   ? 'selected' : '' %>>Male</option>
+          <option value="Female" <%= (values && values.gender === 'Female') ? 'selected' : '' %>>Female</option>
+        </select>
+        <% if (errors && errors.gender && errors.gender.length) { %>
+          <p class="mt-1 text-sm text-rose-700"><%= errors.gender[0] %></p>
+        <% } %>
+      </label>
+
+      <!-- Age range -->
+      <label class="block">
+        <span class="mb-1.5 block text-base text-gray-700">Age range</span>
+        <select
+          class="w-full rounded-2xl border border-gray-200 bg-white px-3.5 py-3 text-base outline-none focus:ring-2 focus:ring-blue-200"
+          name="ageRange"
+          required
+          aria-invalid="<%= (errors && errors.ageRange && errors.ageRange.length) ? 'true' : 'false' %>"
+        >
+          <option value="">Select age range</option>
+          <option value="<18"     <%= (values && values.ageRange === '<18')     ? 'selected' : '' %>>< 18</option>
+          <option value="18-24"   <%= (values && values.ageRange === '18-24')   ? 'selected' : '' %>>18–24</option>
+          <option value="25-34"   <%= (values && values.ageRange === '25-34')   ? 'selected' : '' %>>25–34</option>
+          <option value="35-44"   <%= (values && values.ageRange === '35-44')   ? 'selected' : '' %>>35–44</option>
+          <option value="45-54"   <%= (values && values.ageRange === '45-54')   ? 'selected' : '' %>>45–54</option>
+          <option value="55-64"   <%= (values && values.ageRange === '55-64')   ? 'selected' : '' %>>55–64</option>
+          <option value="65+"     <%= (values && values.ageRange === '65+')     ? 'selected' : '' %>>65+</option>
+        </select>
+        <% if (errors && errors.ageRange && errors.ageRange.length) { %>
+          <p class="mt-1 text-sm text-rose-700"><%= errors.ageRange[0] %></p>
+        <% } %>
+      </label>
+
+      <!-- Nationality -->
+      <%
+      const hasErr = (n) => errors && errors[n] && errors[n].length;
+      const errMsg = (n) => hasErr(n) ? errors[n][0] : null;
+    %>
+    
+    <label class="block">
+      <span class="mb-1.5 block text-base text-gray-700">Nationality</span>
+      <select
+        name="nationality"
+        autocomplete="country-name"
+        class="w-full rounded-2xl border bg-white px-3.5 py-3 text-base outline-none focus:ring-2
+               <%= hasErr('nationality') ? 'border-rose-300 ring-rose-200 focus:ring-rose-300' : 'border-gray-200 focus:ring-blue-200' %>"
+        aria-invalid="<%= hasErr('nationality') ? 'true' : 'false' %>"
+        aria-describedby="<%= hasErr('nationality') ? 'err-nationality' : '' %>"
+        required
+      >
+        <option value="">Select nationality</option>
+        <% (countries || []).forEach(function(c) { %>
+          <option value="<%= c %>" <%= values && values.nationality === c ? 'selected' : '' %>><%= c %></option>
+        <% }) %>
+      </select>
+      <% if (hasErr('nationality')) { %>
+        <p id="err-nationality" class="mt-1 text-sm text-rose-700"><%= errMsg('nationality') %></p>
+      <% } %>
+    </label>
+    
+
+      <!-- Terms -->
+      <label class="mt-1 flex items-start gap-3 text-sm text-gray-700">
+        <input type="checkbox" name="terms" value="1" class="mt-1 h-5 w-5 rounded border-gray-300" required>
+        <span>I agree to the  <a href="/terms" class="text-blue-600 hover:underline">Terms & Data Policy.</a></span>
+      </label>
+
+      <button
+        class="mt-2 w-full inline-flex items-center justify-center gap-2 rounded-full bg-blue-600 px-4 py-3.5 text-base font-semibold text-white shadow hover:bg-blue-500"
+        type="submit"
+      >
+        Create account
+      </button>
+
+      <p class="text-center text-sm text-gray-600">
+        Already have an account?
+        <a href="/login" class="font-medium text-blue-700 hover:underline">Sign in</a>
+      </p>
+    </form>
+  </div>
+</div>
