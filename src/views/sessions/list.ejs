@@ -2,7 +2,9 @@
   <h2 class="text-lg font-semibold"><%= mine ? "My sessions" : "All sessions" %></h2>
   <a class="inline-flex items-center gap-2 px-3 py-2 rounded-full bg-blue-600 text-white text-sm font-medium shadow hover:bg-blue-500 whitespace-nowrap"
      href="/sessions/new">
-    <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor"><path stroke-width="1.8" d="M12 5v14M5 12h14"/></svg>
+    <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor">
+      <path stroke-width="1.8" d="M12 5v14M5 12h14"/>
+    </svg>
     New session
   </a>
 </div>
@@ -24,27 +26,42 @@
           <th class="px-3 py-3 text-right font-medium">Pray</th>
           <% if (!mine) { %>
             <th class="px-3 py-3 text-left font-medium">Status</th>
+            <th class="px-3 py-3 text-right font-medium">Actions</th>
           <% } %>
         </tr>
       </thead>
 
       <tbody class="divide-y divide-gray-100">
         <% if (sessions && sessions.length) { %>
-          <% sessions.forEach(r => { %>
+          <% for (var i = 0; i < sessions.length; i++) { 
+               var r = sessions[i]; %>
             <tr class="hover:bg-gray-50">
               <td class="px-3 py-3 text-gray-800">
                 <%= r.sessionDate
-                  ? new Date(r.sessionDate).toLocaleString('en-GB', { day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit', hour12:true })
+                  ? new Date(r.sessionDate).toLocaleString('en-GB', {
+                      day:'2-digit',
+                      month:'2-digit',
+                      year:'numeric',
+                      hour:'2-digit',
+                      minute:'2-digit',
+                      hour12:true
+                    })
                   : "" %>
               </td>
 
               <% if (!mine) { %>
-                <td class="px-3 py-3 text-gray-700"><%= r.user?.name || r.user?.email || "—" %></td>
+                <td class="px-3 py-3 text-gray-700">
+                  <%= r.user
+                        ? (r.user.name || r.user.email || "-")
+                        : "-" %>
+                </td>
               <% } %>
 
               <td class="px-3 py-3">
                 <span class="inline-flex max-w-[24ch] truncate items-center rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-700 ring-1 ring-gray-200">
-                  <svg viewBox="0 0 24 24" class="mr-1 h-3.5 w-3.5 text-gray-500"><path fill="currentColor" d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/></svg>
+                  <svg viewBox="0 0 24 24" class="mr-1 h-3.5 w-3.5 text-gray-500">
+                    <path fill="currentColor" d="M12 2a7 7 0 00-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 00-7-7zm0 9.5a2.5 2.5 0 110-5 2.5 2.5 0 010 5z"/>
+                  </svg>
                   <%= r.locationText || "Not set" %>
                 </span>
               </td>
@@ -65,19 +82,40 @@
                     <span class="inline-flex items-center rounded-full bg-emerald-50 px-2 py-0.5 text-xs font-medium text-emerald-700 ring-1 ring-emerald-100">Approved</span>
                   <% } %>
                 </td>
+
+                <td class="px-3 py-3 text-right">
+                  <form
+                    action="/admin/sessions/<%= r.id %>/delete"
+                    method="POST"
+                    onsubmit="return confirm('Are you sure you want to delete this session? This cannot be undone.');"
+                    class="inline"
+                  >
+                    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                    <button
+                      type="submit"
+                      class="text-red-600 hover:underline text-xs font-medium"
+                    >
+                      Delete
+                    </button>
+                  </form>
+                </td>
               <% } %>
             </tr>
-          <% }) %>
+          <% } %>
         <% } else { %>
           <tr>
-            <td colspan="<%= mine ? 8 : 9 %>" class="px-5 py-10 text-center">
+            <td colspan="<%= mine ? 7 : 10 %>" class="px-5 py-10 text-center">
               <div class="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 ring-1 ring-gray-200">
-                <svg viewBox="0 0 24 24" class="h-6 w-6 text-gray-400"><path fill="currentColor" d="M5 4h14a1 1 0 011 1v12.5a1.5 1.5 0 01-1.5 1.5H7l-4 3V5a1 1 0 011-1z"/></svg>
+                <svg viewBox="0 0 24 24" class="h-6 w-6 text-gray-400">
+                  <path fill="currentColor" d="M5 4h14a1 1 0 011 1v12.5a1.5 1.5 0 01-1.5 1.5H7l-4 3V5a1 1 0 011-1z"/>
+                </svg>
               </div>
               <div class="mt-3 text-sm font-medium text-gray-800">No sessions found</div>
               <p class="mt-1 text-sm text-gray-500">Try adjusting filters or create a new session.</p>
               <a href="/sessions/new" class="mt-3 inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500">
-                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor"><path stroke-width="1.8" d="M12 5v14M5 12h14"/></svg>
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor">
+                  <path stroke-width="1.8" d="M12 5v14M5 12h14"/>
+                </svg>
                 New session
               </a>
             </td>
