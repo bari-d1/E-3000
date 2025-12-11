@@ -95,9 +95,9 @@ router.post(
 
       // Auto-flag thresholds (tweak as you like)
       const flagThresholds = {
-        engagedCount: 500,
-        gospelCount: 300,
-        witnessCount: 300,
+        engagedCount: 5,
+        gospelCount: 5,
+        witnessCount: 5,
       };
 
       let flagged = false;
