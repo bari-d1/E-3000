@@ -100,4 +100,28 @@
                   </form>
                 </td>
               <% } %>
- 
+            </tr>
+          <% } %>
+        <% } else { %>
+          <tr>
+            <td colspan="<%= mine ? 7 : 10 %>" class="px-5 py-10 text-center">
+              <div class="mx-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-gray-100 ring-1 ring-gray-200">
+                <svg viewBox="0 0 24 24" class="h-6 w-6 text-gray-400">
+                  <path fill="currentColor" d="M5 4h14a1 1 0 011 1v12.5a1.5 1.5 0 01-1.5 1.5H7l-4 3V5a1 1 0 011-1z"/>
+                </svg>
+              </div>
+              <div class="mt-3 text-sm font-medium text-gray-800">No sessions found</div>
+              <p class="mt-1 text-sm text-gray-500">Try adjusting filters or create a new session.</p>
+              <a href="/sessions/new" class="mt-3 inline-flex items-center gap-2 rounded-full bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-500">
+                <svg viewBox="0 0 24 24" class="h-4 w-4" fill="none" stroke="currentColor">
+                  <path stroke-width="1.8" d="M12 5v14M5 12h14"/>
+                </svg>
+                New session
+              </a>
+            </td>
+          </tr>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
